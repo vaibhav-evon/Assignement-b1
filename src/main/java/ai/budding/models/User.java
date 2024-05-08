@@ -58,4 +58,7 @@ public class User {
 
     @JsonIgnore
     private boolean verified;
+
+    @JsonProperty("institution_id")
+    private UUID institutionId;
 }

@@ -1,10 +1,8 @@
 package ai.budding.models.jpa;
 
 import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -13,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -50,10 +47,6 @@ public class Section {
     @JsonProperty("grade")
     @Column(name = "grade")
     private UUID grade;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Grade> grades;
 
     @JsonIgnore
     @ManyToOne

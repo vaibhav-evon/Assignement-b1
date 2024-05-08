@@ -2,7 +2,7 @@ package ai.budding.dto;
 
 import java.util.UUID;
 
-import fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -16,4 +16,10 @@ public class GradeDto {
 
     @JsonProperty("descritpion")
     private String descritpion;
+
+    @JsonProperty("institution_id")
+    private UUID institutionId;
+
+    @JsonProperty("virtualId")
+    private UUID virtualId;
 }

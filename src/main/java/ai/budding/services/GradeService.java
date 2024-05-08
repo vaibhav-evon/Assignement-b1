@@ -1,5 +1,6 @@
 package ai.budding.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,19 +10,39 @@ import org.springframework.stereotype.Service;
 
 import ai.budding.dto.GradeDto;
 import ai.budding.repositories.GradeRepository;
+import ai.budding.repositories.InstitutionRepository;
+import ai.budding.repositories.VirtualClassRepository;
 import ai.budding.models.jpa.Grade;
+import ai.budding.models.jpa.Institution;
+import ai.budding.models.jpa.VirtualClass;
 
 @Service
 public class GradeService {
 
     private final GradeRepository gradeRepository;
+    private final InstitutionRepository institutionRepository;
+    private final VirtualClassRepository virtualClassRepository;
 
-    public GradeService(GradeRepository gradeRepository) {
+    public GradeService(GradeRepository gradeRepository,
+            InstitutionRepository institutionRepository,
+            VirtualClassRepository virtualClassRepository) {
         this.gradeRepository = gradeRepository;
+        this.institutionRepository = institutionRepository;
+        this.virtualClassRepository = virtualClassRepository;
     }
 
-    public List<Grade> getListOfGrades() {
-        return gradeRepository.findAll();
+    public List<GradeDto> getListOfGrades() {
+        List<Grade> grades = gradeRepository.findAll();
+        List<GradeDto> result = new ArrayList<>();
+        grades.forEach(grade -> {
+            GradeDto gradeDto = new GradeDto();
+            gradeDto.setTitle(grade.getTitle());
+            gradeDto.setDescritpion(grade.getDescritpion());
+            gradeDto.setInstitutionId(grade.getInstitution().getId());
+            gradeDto.setVirtualId(grade.getVirtualClass().getId());
+            result.add(gradeDto);
+        });
+        return result;
     }
 
     public Grade saveOrUpdateGrade(GradeDto gradeDto) {
@@ -40,6 +61,13 @@ public class GradeService {
 
             grade.setTitle(gradeDto.getTitle());
             grade.setDescritpion(gradeDto.getDescritpion());
+
+            Optional<Institution> optionIns = institutionRepository.findById(gradeDto.getInstitutionId());
+            grade.setInstitution(optionIns.isPresent() ? optionIns.get() : null);
+
+            Optional<VirtualClass> optionVirtualClass = virtualClassRepository.findById(gradeDto.getVirtualId());
+            grade.setVirtualClass(optionVirtualClass.isPresent() ? optionVirtualClass.get() : null);
+
             grade.setModifiedOn(new Date());
             return gradeRepository.save(grade);
         } catch (Exception exception) {
@@ -60,4 +88,5 @@ public class GradeService {
         }
         return false;
     }
+
 }

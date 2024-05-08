@@ -63,4 +63,8 @@ public class Institution {
     @JsonIgnore
     @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Teacher> teachers;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<User> users;
 }

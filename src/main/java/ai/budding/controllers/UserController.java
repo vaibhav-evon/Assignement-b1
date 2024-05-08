@@ -41,9 +41,9 @@ public class UserController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<User>> allInstitution() {
+    public ResponseEntity<List<com.ai.budding.models.User>> allInstitution() {
         try {
-            List<User> lInstitutions = userService.getListOfUsers();
+            List<com.ai.budding.models.User> lInstitutions = userService.getListOfUsers();
             return ResponseEntity.ok(lInstitutions);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

@@ -42,9 +42,9 @@ public class GradeController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Grade>> allInstitution() {
+    public ResponseEntity<List<GradeDto>> allInstitution() {
         try {
-            List<Grade> lInstitutions = gradeService.getListOfGrades();
+            List<GradeDto> lInstitutions = gradeService.getListOfGrades();
             return ResponseEntity.ok(lInstitutions);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

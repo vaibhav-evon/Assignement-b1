@@ -1,5 +1,6 @@
 package ai.budding.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,9 +10,11 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import ai.budding.repositories.InstitutionRepository;
 import ai.budding.repositories.RoleRepository;
 import ai.budding.repositories.UserRepository;
 import ai.budding.repositories.UserRoleMappingRepository;
+import ai.budding.models.jpa.Institution;
 import ai.budding.models.jpa.Role;
 import ai.budding.models.jpa.User;
 import ai.budding.models.jpa.UserRoleMapping;
@@ -25,15 +28,31 @@ public class UserService {
 
     private final UserRoleMappingRepository userRoleMappingRepository;
 
+    private final InstitutionRepository institutionRepository;
+
     public UserService(UserRepository userRepository, RoleRepository roleRepository,
-            UserRoleMappingRepository userRoleMappingRepository) {
+            UserRoleMappingRepository userRoleMappingRepository, InstitutionRepository institutionRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userRoleMappingRepository = userRoleMappingRepository;
+        this.institutionRepository = institutionRepository;
     }
 
-    public List<User> getListOfUsers() {
-        return userRepository.findAll();
+    public List<com.ai.budding.models.User> getListOfUsers() {
+        List<User> users = userRepository.findAll();
+        List<com.ai.budding.models.User> result = new ArrayList<>();
+        users.forEach(user -> {
+            com.ai.budding.models.User userDto = new com.ai.budding.models.User();
+            userDto.setFirstName(user.getFirstName());
+            userDto.setLastName(user.getLastName());
+            userDto.setCity(user.getCity());
+            userDto.setCountry(user.getCountry());
+            userDto.setEmail(user.getEmail());
+            userDto.setGender(user.getGender());
+            userDto.setInstitutionId(user.getInstitution().getId());
+            result.add(userDto);
+        });
+        return result;
     }
 
     @Transactional
@@ -74,6 +93,9 @@ public class UserService {
             user.setUserType(userDto.getUserType());
             user.setVerified(true);
             user.setModifiedOn(new Date());
+
+            Optional<Institution> optionIns = institutionRepository.findById(userDto.getInstitutionId());
+            user.setInstitution(optionIns.isPresent() ? optionIns.get() : null);
             if (userRepository.save(user) != null) {
                 UserRoleMapping userRMapping = userRoleMappingRepository
                         .findByUserId(user.getId());
